@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "596554109004",
+    "firebase_url": "https://messageapp-59853-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "messageapp-59853",
+    "storage_bucket": "messageapp-59853.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:596554109004:android:5abc10d38773bb080464e9",
+        "android_client_info": {
+          "package_name": "com.example.message_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "596554109004-mbm21pi0d56q4hj4shguf665alp7dfua.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA_DTxkQQ7d3kEkia9ZtUNMNG6XysCphQE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "596554109004-mbm21pi0d56q4hj4shguf665alp7dfua.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
