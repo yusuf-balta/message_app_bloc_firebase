@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:message_app/local_push_notifications/local_push_notification_helper.dart';
 import 'package:message_app/model/message_model.dart';
 import 'package:message_app/model/person_model.dart';
+import 'package:message_app/ui/SecondPage.dart';
 import 'package:message_app/ui/chat_room/chat_room_bloc/chat_room_bloc.dart';
 import 'package:message_app/ui/chat_room/chat_room_bloc/chat_room_event.dart';
 import 'package:message_app/ui/chat_room/chat_room_bloc/chat_room_state.dart';
@@ -17,6 +20,7 @@ class ChatRoom extends StatefulWidget {
 }
 
 class _ChatRoomState extends State<ChatRoom> {
+  final notifications = FlutterLocalNotificationsPlugin();
   late TextEditingController? txtMessageControler;
   bool isLoading = true;
   late ChatRoomBloc chatRoomBloc;
@@ -24,11 +28,27 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   void initState() {
     super.initState();
+    final settingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload!));
+
+    notifications.initialize(
+        InitializationSettings(android: settingsAndroid, iOS: settingsIOS),
+        onSelectNotification: (payload) => onSelectNotification(payload!));
+
     chatRoomBloc = ChatRoomBloc(userId: widget.personModel.userId!);
     txtMessageControler = TextEditingController();
 
     chatRoomBloc.add(InitialChatRoomEvent(uuid: widget.personModel.userId!));
   }
+
+  Future<void> onSelectNotification(String payload) async =>
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SecondPage(payload: payload)),
+      );
 
   @override
   void dispose() {
@@ -47,6 +67,15 @@ class _ChatRoomState extends State<ChatRoom> {
           setState(() {
             messagesModel = state.messageModel;
             isLoading = false;
+          });
+        } else if (state is NewMessageState) {
+          showOngoingNotification(notifications,
+              title: state.message.userId!, body: state.message.message!);
+        } else if (state is NewMessageRoomChatRoomState) {
+          setState(() {
+            print(state.message);
+            int length = messagesModel.length;
+            messagesModel.insert(0, state.message);
           });
         }
       },
@@ -113,7 +142,9 @@ class _ChatRoomState extends State<ChatRoom> {
                                                   const EdgeInsets.all(8.0),
                                               child: Text(
                                                 message.message!,
-                                                style: TextStyle(fontSize: 16),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyText2,
                                               ),
                                             )),
                                       ),

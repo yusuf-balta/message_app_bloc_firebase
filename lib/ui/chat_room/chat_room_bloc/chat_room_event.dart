@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import 'package:message_app/model/message_model.dart';
@@ -21,5 +22,19 @@ class SendMessageChatRoomEvent extends ChatRoomEvent {
   SendMessageChatRoomEvent({
     required this.uuid,
     required this.messageModel,
+  });
+}
+
+class NewMessageChatRoomEvent extends ChatRoomEvent {
+  DatabaseEvent newMessage;
+  NewMessageChatRoomEvent({
+    required this.newMessage,
+  });
+}
+
+class NewMessageRoomChatRoomEvent extends ChatRoomEvent {
+  DatabaseEvent newMessage;
+  NewMessageRoomChatRoomEvent({
+    required this.newMessage,
   });
 }

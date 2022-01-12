@@ -17,3 +17,17 @@ class InitialSuccsesChatRoomState extends ChatRoomState {
 }
 
 class SendChatRoomState extends ChatRoomState {}
+
+class NewMessageState extends ChatRoomState {
+  MessageModel message;
+  NewMessageState({
+    required this.message,
+  });
+}
+
+class NewMessageRoomChatRoomState extends ChatRoomState {
+  MessageModel message;
+  NewMessageRoomChatRoomState({
+    required this.message,
+  });
+}

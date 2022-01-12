@@ -1,7 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:message_app/local_push_notifications/local_push_notification_helper.dart';
 import 'package:message_app/model/person_model.dart';
+import 'package:message_app/ui/SecondPage.dart';
 import 'package:message_app/ui/chat_room/chat_room.dart';
 import 'package:message_app/ui/home/home_bloc/home_bloc.dart';
 import 'package:message_app/ui/home/home_bloc/home_event.dart';
@@ -17,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final notifications = FlutterLocalNotificationsPlugin();
   String currentUser = '';
   FirebaseAuth auth = FirebaseAuth.instance;
   bool isLoading = true;
@@ -26,9 +30,24 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    final settingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final settingsIOS = IOSInitializationSettings(
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload!));
+
+    notifications.initialize(
+        InitializationSettings(android: settingsAndroid, iOS: settingsIOS),
+        onSelectNotification: (payload) => onSelectNotification(payload!));
     homeBloc = HomeBloc();
+    homeBloc.add(InitialHomeEvent());
   }
 
+  Future<void> onSelectNotification(String payload) async =>
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SecondPage(payload: payload)),
+      );
   @override
   void dispose() {
     homeBloc.close();
@@ -57,6 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
       },
       child: SafeArea(
         child: Scaffold(
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showOngoingNotification(notifications,
+                  title: 'Tite', body: 'Body');
+            },
+          ),
           appBar: AppBar(
             title: currentUser == '' ? null : Text(currentUser),
             actions: [
@@ -79,8 +104,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemBuilder: (context, index) {
                     final personModel = personModels[index];
                     if (auth.currentUser!.uid == personModel.userId) {
-                      homeBloc.add(ChangedAppBarHomeEvent(
-                          currentUser: personModel.userName!));
+                      if (currentUser == '') {
+                        homeBloc.add(ChangedAppBarHomeEvent(
+                            currentUser: personModel.userName!));
+                      }
+
                       return SizedBox();
                     }
                     return GestureDetector(

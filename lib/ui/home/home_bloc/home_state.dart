@@ -12,7 +12,7 @@ class InitialHomeState extends HomeState {}
 class LoadingHomeState extends HomeState {}
 
 class SuccsesHomeState extends HomeState {
-  List<PersonModel> personModel;
+  final List<PersonModel> personModel;
   SuccsesHomeState({
     required this.personModel,
   });
@@ -21,7 +21,7 @@ class SuccsesHomeState extends HomeState {
 class LogoutSuccsesHomeState extends HomeState {}
 
 class SuccsesChangeAppBar extends HomeState {
-  String currentUser;
+  final String currentUser;
   SuccsesChangeAppBar({
     required this.currentUser,
   });
